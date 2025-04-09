@@ -1,5 +1,4 @@
 import { AppSidebar } from "@/components/app-sidebar"
-import { AddBuild } from "@/components/forms/Add-build"
 import { BasicSettings } from "@/components/forms/Basic-settings"
 import { BuildConfiguration } from "@/components/forms/Configurations"
 import { SiteHeader } from "@/components/site-header"
