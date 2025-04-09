@@ -44,7 +44,7 @@ export function AddBuild() {
     },
   })
 
-  const onSubmit = (values: any) => {
+  const onSubmit = (values) => {
     console.log(values)
   }
 

@@ -3,7 +3,7 @@ import {
   Card,
   CardDescription,
 } from "@/components/ui/card"
-import { Bot, BotMessageSquare, PlusCircleIcon, Trash2 } from "lucide-react"
+import { Bot , PlusCircleIcon, Trash2 } from "lucide-react"
 import { useState } from "react";
 import { Input } from "./ui/input";
 
