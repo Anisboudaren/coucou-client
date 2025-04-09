@@ -5,8 +5,8 @@ import React from 'react'
 const Chat = () => {
   return (
     <>
-    <div>
-        <h1>Welcome</h1>
+    <div className='p-0 m-0'>
+       
         <ChatWidget />
     </div>
     </>
