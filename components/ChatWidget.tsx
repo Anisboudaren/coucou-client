@@ -23,7 +23,7 @@ import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { useMobile } from "@/hooks/use-mobile"
+import { useMobile } from "@/hooks/useMobile"
 
 type Message = {
   id: string
