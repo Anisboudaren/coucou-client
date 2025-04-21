@@ -10,14 +10,14 @@
   });
 
   const launcher = document.createElement('iframe');
-  launcher.src = '/chat/iframe/bubble';
+  launcher.src = 'https://rag-chat-widget-test.vercel.app/chat/iframe/bubble';
   launcher.style.width = '60px';
   launcher.style.height = '60px';
   launcher.style.border = 'none';
   launcher.style.borderRadius = '50%';
 
   const full = document.createElement('iframe');
-  full.src = '/chat/iframe/fullchat';
+  full.src = 'https://rag-chat-widget-test.vercel.app/chat/iframe/fullchat';
   Object.assign(full.style, {
     position: 'fixed',
     top: 0,
