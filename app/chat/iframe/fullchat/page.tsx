@@ -13,7 +13,7 @@ export default function FullChat() {
             interface ResponseData {
                 message: string;
             }
-            const response = await axios.post<ResponseData>("https://f381-105-110-19-72.ngrok-free.app /test", {
+            const response = await axios.post<ResponseData>("https://f381-105-110-19-72.ngrok-free.app/test", {
                 name: inputText,
             });
             console.log("Response:", response.data);
