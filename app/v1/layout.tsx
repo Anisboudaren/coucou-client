@@ -25,7 +25,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body
+      <head>
+      <script
+  src="/widget/coucou.js"
+  data-agent-id="your-agent-id"
+  defer
+></script>
+
+        </head>
+<body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ThemeProvider attribute="class"
