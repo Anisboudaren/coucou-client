@@ -1,4 +1,4 @@
-"use client"
+'use client';
 
 import {
   Form,
@@ -7,45 +7,46 @@ import {
   FormField,
   FormItem,
   FormLabel,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible"
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 
-import { Select, SelectItem, SelectTrigger, SelectValue, SelectContent } from "@/components/ui/select"
-import { z } from "zod"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { Separator } from "../ui/separator"
-import { useState } from "react"
-import { Checkbox } from "../ui/checkbox"
+import {
+  Select,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+} from '@/components/ui/select';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { Separator } from '../ui/separator';
+import { useState } from 'react';
+import { Checkbox } from '../ui/checkbox';
 
 const formSchema = z.object({
   aiName: z.string().min(2),
   template: z.string(),
   model: z.string(),
-  tokenLimit: z.number().min(0).optional(),
   messageLength: z.number().min(0).optional(),
-  openAIKey: z.string().optional(),
-  allowHumanAgent: z.boolean().optional(),
-})
 
-export function BasicSettings() {
+  allowHumanAgent: z.boolean().optional(),
+});
+
+export function BasicSettings({ agent }) {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      aiName: "",
-      template: "sales",
-      model: "gpt-4-turbo",
-      tokenLimit: 1000, // Example default value for token limit
+      aiName: agent?.name || '', // Default value from agent prop
+      template: 'sales',
+      model: 'gpt-4-turbo',
+
       messageLength: 500, // Example default value for message length
-      openAIKey: "",
+
       allowHumanAgent: true,
     },
-  })
+  });
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -53,8 +54,7 @@ export function BasicSettings() {
 
   return (
     <Form {...form}>
-      <form className="w-full space-y-6 ">
-
+      <form className="w-full space-y-6">
         {/* AI Name Field */}
         <FormField
           control={form.control}
@@ -117,11 +117,11 @@ export function BasicSettings() {
         <Separator />
 
         <Collapsible open={isOpen} onOpenChange={handleToggle}>
-          <CollapsibleTrigger className="flex items-center  text-muted-foreground cursor-pointer space-x-2 mb-4  ">
-            <span >Advanced settings</span>
+          <CollapsibleTrigger className="text-muted-foreground mb-4 flex cursor-pointer items-center space-x-2">
+            <span>Advanced settings</span>
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className={`w-4 h-4 transform transition-transform duration-700 ${isOpen ? "rotate-180" : "rotate-0"}`}
+              className={`h-4 w-4 transform transition-transform duration-700 ${isOpen ? 'rotate-180' : 'rotate-0'}`}
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -134,25 +134,9 @@ export function BasicSettings() {
               />
             </svg>
           </CollapsibleTrigger>
-          <CollapsibleContent className={`overflow-hidden space-y-6 max-h-0 transition-all duration-700 ease-in-out ${isOpen ? "max-h-96" : ""}`}>
-            {/* Token Limit Field */}
-            <FormField
-              control={form.control}
-              name="tokenLimit"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Token Limit</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      placeholder="Enter token limit"
-                      {...field}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-
+          <CollapsibleContent
+            className={`max-h-0 space-y-6 overflow-hidden transition-all duration-700 ease-in-out ${isOpen ? 'max-h-96' : ''}`}
+          >
             {/* Message Length Field */}
             <FormField
               control={form.control}
@@ -161,29 +145,7 @@ export function BasicSettings() {
                 <FormItem>
                   <FormLabel>Message Length Limit</FormLabel>
                   <FormControl>
-                    <Input
-                      type="number"
-                      placeholder="Enter message length limit"
-                      {...field}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-
-            {/* OpenAI API Key */}
-            <FormField
-              control={form.control}
-              name="openAIKey"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Your OpenAI API Key</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="text"
-                      placeholder="Enter your OpenAI API key"
-                      {...field}
-                    />
+                    <Input type="number" placeholder="Enter message length limit" {...field} />
                   </FormControl>
                 </FormItem>
               )}
@@ -194,30 +156,24 @@ export function BasicSettings() {
               control={form.control}
               name="allowHumanAgent"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow">
-                <FormControl>
-                  <Checkbox
-                  defaultChecked={true}
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                </FormControl>
-                <div className="space-y-1 leading-none">
-                  <FormLabel>
-                    Allow Client to Request Human Agent
-                  </FormLabel>
-                  <FormDescription>
-                    This is activated by Default for all agents.
-                    
-                  </FormDescription>
-                </div>
-              </FormItem>
+                <FormItem className="flex flex-row items-start space-y-0 space-x-3 rounded-md border p-4 shadow">
+                  <FormControl>
+                    <Checkbox
+                      defaultChecked={true}
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <div className="space-y-1 leading-none">
+                    <FormLabel>Allow Client to Request Human Agent</FormLabel>
+                    <FormDescription>This is activated by Default for all agents.</FormDescription>
+                  </div>
+                </FormItem>
               )}
             />
           </CollapsibleContent>
         </Collapsible>
-
       </form>
     </Form>
-  )
+  );
 }

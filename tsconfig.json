@@ -22,6 +22,14 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "components/app-sidebar.jsx",
+    "components/forms/Add-build.tsx",
+    "components/ChatWidget.jsx"
+  ],
   "exclude": ["node_modules"]
 }
