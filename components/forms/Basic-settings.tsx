@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import {
@@ -18,36 +19,18 @@ import {
   SelectValue,
   SelectContent,
 } from '@/components/ui/select';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+
 import { Separator } from '../ui/separator';
 import { useState } from 'react';
 import { Checkbox } from '../ui/checkbox';
 
-const formSchema = z.object({
-  aiName: z.string().min(2),
-  template: z.string(),
-  model: z.string(),
-  messageLength: z.number().min(0).optional(),
+import { UseFormReturn } from 'react-hook-form';
 
-  allowHumanAgent: z.boolean().optional(),
-});
+interface BasicSettingsProps {
+  form: UseFormReturn<any>; // Replace 'any' with your form's type if available
+}
 
-export function BasicSettings({ agent }) {
-  const form = useForm({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      aiName: agent?.name || '', // Default value from agent prop
-      template: 'sales',
-      model: 'gpt-4-turbo',
-
-      messageLength: 500, // Example default value for message length
-
-      allowHumanAgent: true,
-    },
-  });
-
+export function BasicSettings({ form }: BasicSettingsProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleToggle = () => setIsOpen(!isOpen);

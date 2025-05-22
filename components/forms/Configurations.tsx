@@ -1,8 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import {
   Form,
   FormControl,
@@ -11,7 +9,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-
+import { Save } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -36,22 +34,6 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 
-const personalitySchema = z.object({
-  primaryTraits: z.array(z.string()).min(1, {
-    message: 'Select at least one personality trait',
-  }),
-  communicationTone: z.string(),
-  formalityLevel: z.number(),
-
-  primaryFunction: z.string(),
-  brandValues: z.string().optional(),
-});
-
-const knowledgeSchema = z.object({
-  rules: z.string().min(1, 'Rules are required'),
-  companyInformation: z.string().min(1, 'Company information is required'),
-});
-
 const TRAIT_OPTIONS = [
   'Analytical',
   'Friendly',
@@ -63,7 +45,19 @@ const TRAIT_OPTIONS = [
 
 const FUNCTION_OPTIONS = ['Advisor', 'Assistant', 'Educator', 'Entertainer', 'Task-Automator'];
 
-export function BuildConfiguration() {
+import { UseFormReturn } from 'react-hook-form';
+
+type BuildConfigurationProps = {
+  personalityForm: UseFormReturn<any>;
+  knowledgeForm: UseFormReturn<any>;
+  handleSubmit: () => void;
+};
+
+export function BuildConfiguration({
+  personalityForm,
+  knowledgeForm,
+  handleSubmit,
+}: BuildConfigurationProps) {
   const [activeTab, setActiveTab] = useState('personality');
   const [isImportDialogOpen, setIsImportDialogOpen] = useState(false);
   const [websiteUrl, setWebsiteUrl] = useState('');
@@ -101,26 +95,6 @@ export function BuildConfiguration() {
     }, 3000);
   };
 
-  const personalityForm = useForm({
-    resolver: zodResolver(personalitySchema),
-    defaultValues: {
-      primaryTraits: [],
-      communicationTone: 'conversational',
-      formalityLevel: 1,
-
-      primaryFunction: '',
-      brandValues: '',
-    },
-  });
-
-  const knowledgeForm = useForm({
-    resolver: zodResolver(knowledgeSchema),
-    defaultValues: {
-      rules: '',
-      companyInformation: '',
-    },
-  });
-
   const handleNext = () => {
     // Validate current tab before proceeding
     if (activeTab === 'personality') {
@@ -141,24 +115,6 @@ export function BuildConfiguration() {
     knowledgeForm.setValue('companyInformation', 'Default FAQ content...');
   };
 
-  const handleSubmit = () => {
-    // Validate both forms
-    Promise.all([personalityForm.trigger(), knowledgeForm.trigger()]).then(
-      ([isPersonalityValid, isKnowledgeValid]) => {
-        if (isPersonalityValid && isKnowledgeValid) {
-          const personalityValues = personalityForm.getValues();
-          const knowledgeValues = knowledgeForm.getValues();
-
-          console.log('Form 1 (Personality) values:', personalityValues);
-          console.log('Form 2 (Knowledge) values:', knowledgeValues);
-
-          // Here you would typically send the data to your API
-          alert('Configuration saved successfully!');
-        }
-      },
-    );
-  };
-
   return (
     <>
       <Tabs value={activeTab} className="w-full space-y-6">
@@ -169,135 +125,138 @@ export function BuildConfiguration() {
 
         <TabsContent value="personality">
           <Form {...personalityForm}>
-            <form className="w-full space-y-6">
-              {/* Personality Traits */}
-              <FormField
-                control={personalityForm.control}
-                name="primaryTraits"
-                render={() => (
-                  <FormItem>
-                    <FormLabel>Primary Personality Traits (Select 3-5)</FormLabel>
-                    <div className="grid grid-cols-2 gap-2">
-                      {TRAIT_OPTIONS.map(trait => (
-                        <FormField
-                          key={trait}
-                          control={personalityForm.control}
-                          name="primaryTraits"
-                          render={({ field }) => (
-                            <FormItem className="flex items-center space-y-0 space-x-3">
-                              <FormControl>
-                                <Checkbox
-                                  checked={field.value?.includes(trait)}
-                                  onCheckedChange={checked => {
-                                    const current = field.value || [];
-                                    return checked
-                                      ? field.onChange([...current, trait])
-                                      : field.onChange(current.filter(v => v !== trait));
-                                  }}
-                                />
-                              </FormControl>
-                              <FormLabel className="font-normal">{trait}</FormLabel>
-                            </FormItem>
-                          )}
-                        />
-                      ))}
-                    </div>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              {/* Communication Tone */}
-              <FormField
-                control={personalityForm.control}
-                name="communicationTone"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Communication Tone</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select tone" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="formal">Formal</SelectItem>
-                        <SelectItem value="conversational">Conversational</SelectItem>
-                        <SelectItem value="casual">Casual</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {/* Formality Level */}
-              <FormField
-                control={personalityForm.control}
-                name="formalityLevel"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      Formality Level:{' '}
-                      {field.value === 0 ? 'Low' : field.value === 1 ? 'Medium' : 'High'}
-                    </FormLabel>
-                    <FormControl>
-                      <Slider
-                        defaultValue={[field.value]}
-                        max={2}
-                        step={1}
-                        onValueChange={vals => field.onChange(vals[0])}
-                      />
-                    </FormControl>
-                    <div className="text-muted-foreground flex justify-between text-xs">
-                      <span>Low</span>
-                      <span>Medium</span>
-                      <span>High</span>
-                    </div>
-                  </FormItem>
-                )}
-              />
-
-              {/* Primary Function */}
-              <FormField
-                control={personalityForm.control}
-                name="primaryFunction"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Primary Function</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select function" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {FUNCTION_OPTIONS.map(func => (
-                          <SelectItem key={func} value={func.toLowerCase()}>
-                            {func}
-                          </SelectItem>
+            <form className="flex w-full flex-col space-y-6">
+              <div className="w-full space-y-6">
+                {/* Personality Traits */}
+                <FormField
+                  control={personalityForm.control}
+                  name="primaryTraits"
+                  render={() => (
+                    <FormItem>
+                      <FormLabel>Primary Personality Traits (Select 3-5)</FormLabel>
+                      <div className="grid grid-cols-2 gap-2">
+                        {TRAIT_OPTIONS.map(trait => (
+                          <FormField
+                            key={trait}
+                            control={personalityForm.control}
+                            name="primaryTraits"
+                            render={({ field }) => (
+                              <FormItem className="flex items-center space-y-0 space-x-3">
+                                <FormControl>
+                                  <Checkbox
+                                    checked={field.value?.includes(trait)}
+                                    onCheckedChange={checked => {
+                                      const current = field.value || [];
+                                      return checked
+                                        ? field.onChange([...current, trait])
+                                        : field.onChange(
+                                            current.filter((v: string) => v !== trait),
+                                          );
+                                    }}
+                                  />
+                                </FormControl>
+                                <FormLabel className="font-normal">{trait}</FormLabel>
+                              </FormItem>
+                            )}
+                          />
                         ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                {/* Communication Tone */}
+                <FormField
+                  control={personalityForm.control}
+                  name="communicationTone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Communication Tone</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select tone" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="formal">Formal</SelectItem>
+                          <SelectItem value="conversational">Conversational</SelectItem>
+                          <SelectItem value="casual">Casual</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              {/* Brand Values */}
-              <FormField
-                control={personalityForm.control}
-                name="brandValues"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Brand Values (Optional)</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Ex: innovation, trust, simplicity" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                {/* Formality Level */}
+                <FormField
+                  control={personalityForm.control}
+                  name="formalityLevel"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        Formality Level:{' '}
+                        {field.value === 0 ? 'Low' : field.value === 1 ? 'Medium' : 'High'}
+                      </FormLabel>
+                      <FormControl>
+                        <Slider
+                          defaultValue={[field.value]}
+                          max={2}
+                          step={1}
+                          onValueChange={vals => field.onChange(vals[0])}
+                        />
+                      </FormControl>
+                      <div className="text-muted-foreground flex justify-between text-xs">
+                        <span>Low</span>
+                        <span>Medium</span>
+                        <span>High</span>
+                      </div>
+                    </FormItem>
+                  )}
+                />
 
+                {/* Primary Function */}
+                <FormField
+                  control={personalityForm.control}
+                  name="primaryFunction"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Primary Function</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select function" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {FUNCTION_OPTIONS.map(func => (
+                            <SelectItem key={func} value={func.toLowerCase()}>
+                              {func}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Brand Values */}
+                <FormField
+                  control={personalityForm.control}
+                  name="brandValues"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Brand Values (Optional)</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Ex: innovation, trust, simplicity" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
               <div className="flex justify-end">
                 <Button type="button" onClick={handleNext}>
                   Next: Rules & Knowledge
@@ -334,7 +293,6 @@ export function BuildConfiguration() {
                   )}
                 />
               </div>
-
               {/* Company Information Section */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
@@ -382,7 +340,7 @@ export function BuildConfiguration() {
                   Back to Personality
                 </Button>
                 <Button type="button" onClick={handleSubmit}>
-                  Submit & Save
+                  <Save className="h-5! w-5!" /> Save & Submit
                 </Button>
               </div>
             </form>

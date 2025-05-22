@@ -133,7 +133,6 @@ export function SectionCards() {
           : filterBots.map(bot => (
               <Card
                 key={bot.id}
-                onClick={() => router.push(`/v1/agents/build/${bot.id}`)}
                 className="flex cursor-pointer flex-col items-center justify-center gap-1 py-6 transition-transform hover:scale-105"
               >
                 <Dialog
@@ -142,13 +141,15 @@ export function SectionCards() {
                 >
                   <CardDescription className="mr-10 flex w-full justify-end">
                     <DialogTrigger asChild>
-                      <Trash2
+                      <button
                         onClick={e => {
                           e.stopPropagation();
                           setDeletingId(bot.id);
                         }}
-                        className="text-muted-foreground h-3.5 w-3.5 hover:text-red-500"
-                      />
+                        className="text-muted-foreground hover:text-red-500"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
                     </DialogTrigger>
                   </CardDescription>
 
@@ -177,14 +178,18 @@ export function SectionCards() {
                     </div>
                   </DialogContent>
                 </Dialog>
-
-                <Bot className="text-primary h-12 w-12" />
-                <p className="text-sm text-white">{bot.name}</p>
-                <p className="text-muted-foreground text-xs">
-                  {formatDistanceToNow(new Date(bot.createdAt), {
-                    addSuffix: true,
-                  }).replace('about', 'created')}
-                </p>
+                <div
+                  className="flex flex-col items-center justify-center gap-1"
+                  onClick={() => router.push(`/v1/agents/build/${bot.id}`)}
+                >
+                  <Bot className="text-primary h-12 w-12" />
+                  <p className="text-sm text-white">{bot.name}</p>
+                  <p className="text-muted-foreground text-xs">
+                    {formatDistanceToNow(new Date(bot.createdAt), {
+                      addSuffix: true,
+                    }).replace('about', 'created')}
+                  </p>
+                </div>
               </Card>
             ))}
       </div>
