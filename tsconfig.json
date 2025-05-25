@@ -29,7 +29,9 @@
     ".next/types/**/*.ts",
     "components/app-sidebar.jsx",
     "components/forms/Add-build.tsx",
-    "components/ChatWidget.jsx"
+    "components/ChatWidget.jsx",
+    "components/forms/Configurations.jsx",
+    "components/forms/Basic-settings.jsx"
   ],
   "exclude": ["node_modules"]
 }

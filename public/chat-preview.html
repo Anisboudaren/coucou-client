@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Chat Preview</title>
+
+    <style>
+      /* your chat styles here */
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden;
+      }
+      body {
+        background-color: #18181b;
+      }
+    </style>
+  </head>
+  <body>
+    <script>
+      console.log('Chat iframe URL:', window.location.href);
+      console.log('Origin:', window.location.origin);
+    </script>
+
+    <script src="scripts/bubble.js"></script>
+    <!-- Chat UI container expected by your bubble.js -->
+    <div id="chat-container"></div>
+  </body>
+</html>

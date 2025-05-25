@@ -1,14 +1,16 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 import { AppSidebar } from '@/components/app-sidebar';
 import { SiteHeader } from '@/components/site-header';
 import { BuildPageSkeleton } from '@/components/skeleton/EditPage';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
-
+import { useParams } from 'next/navigation';
 import React, { useState } from 'react';
 
 export default function Page() {
   const [loading, setLoading] = useState(false);
-
+  const params = useParams();
+  const id = params.id;
   return (
     <SidebarProvider
       style={
@@ -37,9 +39,15 @@ export default function Page() {
                   <h2 className="mb-4 text-xl font-semibold">Customization</h2>
                 </div>
 
-                <div className="bg-sidebar w-full rounded-2xl border-[0.5px] border-gray-400 p-6 md:w-2/3">
+                <div className="bg-sidebar flex w-full flex-col rounded-2xl border-[0.5px] border-gray-400 p-6 md:w-2/3">
                   <h2 className="mb-4 text-xl font-semibold">Preview</h2>
-                  <div className="relative"></div>
+                  <div className="h-0 flex-grow">
+                    <iframe
+                      src={`/chat-preview.html?id=${id}`}
+                      className="h-full w-full rounded-lg border"
+                      title="Chat Preview"
+                    />
+                  </div>
                 </div>
               </div>
             )}
