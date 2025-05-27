@@ -96,7 +96,7 @@ export default function Page() {
       const BasicSettings = form.getValues();
       const agentId = params.id;
       await axios.post(
-        `/api/proxy/v1/agent/${agentId}/build`,
+        `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/v1/agent/${agentId}/build`,
         {
           ...BasicSettings,
           ...personalityValues,
@@ -125,9 +125,12 @@ export default function Page() {
     const getAgent = async () => {
       const agentId = params.id;
       try {
-        const response = await axios.get(`/api/proxy/v1/agent/${agentId}`, {
-          withCredentials: true,
-        });
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/v1/agent/${agentId}`,
+          {
+            withCredentials: true,
+          },
+        );
         const agentData = response.data as { data: Agent };
         setAgent(agentData.data);
       } catch (error) {

@@ -47,9 +47,12 @@ export function NavUser({
       console.log('Sending logout request...');
       console.log('Backend URL:', process.env.NEXT_PUBLIC_BACKEND_BASE_URL);
 
-      const response = await axios.get(`/api/proxy/v1/auth/logout`, {
-        withCredentials: true,
-      });
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/v1/auth/logout`,
+        {
+          withCredentials: true,
+        },
+      );
       console.log('Logout response:', response);
 
       if (response.status === 200) {

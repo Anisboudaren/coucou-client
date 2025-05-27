@@ -49,20 +49,26 @@ const BubbleIframePage = () => {
         localStorage.removeItem('convoIdExpiration');
       }
       try {
-        const res = await axios.post(`/api/proxy/v1/conversation/init`, {
-          agentId: agentId,
-          firstMessage: input,
-        });
+        const res = await axios.post(
+          `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/v1/conversation/init`,
+          {
+            agentId: agentId,
+            firstMessage: input,
+          },
+        );
 
         const newConvoId = (res.data as { id: string }).id;
         const expirationTime = Date.now() + 1000 * 60 * 30; // 30 minutes expiration
         localStorage.setItem('convoId', newConvoId);
         localStorage.setItem('convoIdExpiration', expirationTime.toString());
 
-        const sendRes = await axios.post(`/api/proxy/v1/conversation/send`, {
-          conversationId: newConvoId,
-          message: input,
-        });
+        const sendRes = await axios.post(
+          `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/v1/conversation/send`,
+          {
+            conversationId: newConvoId,
+            message: input,
+          },
+        );
 
         const sendData = sendRes.data as { agentMessage: { message: string } };
         const reply = sendData.agentMessage.message;
@@ -84,10 +90,13 @@ const BubbleIframePage = () => {
     } else {
       // in case already convoID we just go with this... hope that works
       const storedConvoId = localStorage.getItem('convoId')!;
-      const res = await axios.post(`/api/proxy/v1/conversation/send`, {
-        conversationId: storedConvoId,
-        message: input,
-      });
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/v1/conversation/send`,
+        {
+          conversationId: storedConvoId,
+          message: input,
+        },
+      );
 
       const data = res.data as { agentMessage: { message: string } };
       const reply = data.agentMessage.message;

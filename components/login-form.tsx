@@ -27,7 +27,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'form'>)
 
     try {
       const response = await axios.post(
-        `/api/proxy/v1/auth/login`,
+        `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/v1/auth/login`,
         { email, password },
         { withCredentials: true },
       );
@@ -50,7 +50,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'form'>)
 
   const handleGoogleLogin = () => {
     // Redirect user to your backend Google OAuth URL (start OAuth flow)
-    window.location.href = `/api/proxy/v1/auth/google`;
+    window.location.href = `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/v1/auth/google`;
   };
 
   return (

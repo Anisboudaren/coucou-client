@@ -40,7 +40,7 @@ export function SectionCards() {
   useEffect(() => {
     const getAgents = async () => {
       try {
-        const response = await axios.get(`/api/proxy/v1/agent`, {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/v1/agent`, {
           withCredentials: true,
         });
         setBots((response.data as { data: Bot[] }).data);
@@ -67,7 +67,7 @@ export function SectionCards() {
   const deleteBot = async (id: string) => {
     setIsDeleting(true);
     try {
-      await axios.delete(`/api/proxy/v1/agent/${id}`, {
+      await axios.delete(`${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/v1/agent/${id}`, {
         withCredentials: true,
       });
       setBots(prev => prev.filter(bot => bot.id !== id));
