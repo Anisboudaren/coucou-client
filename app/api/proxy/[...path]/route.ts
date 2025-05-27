@@ -26,7 +26,7 @@ async function proxy(req: NextRequest) {
 
   const headers = new Headers(req.headers);
   headers.delete('host');
-  //   headers.delete('accept-encoding');
+  headers.delete('accept-encoding');
 
   const body =
     req.method !== 'GET' && req.method !== 'HEAD' ? await req.clone().arrayBuffer() : undefined;
@@ -40,7 +40,7 @@ async function proxy(req: NextRequest) {
 
   // Remove content-encoding header to prevent double decompression on client
   const responseHeaders = new Headers(res.headers);
-  //   responseHeaders.delete('content-encoding');
+  responseHeaders.delete('content-encoding');
 
   // Stream backend response directly to client without buffering whole response
   return new Response(res.body, {
