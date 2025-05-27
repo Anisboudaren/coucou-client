@@ -25,7 +25,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'form'>)
         { withCredentials: true },
       );
       if (response.status === 200) {
-        window.location.href = `${process.env.NEXT_PUBLIC_FRONTEND_BASE_URL}/v1/dashboard`;
+        window.location.href = (response.data as { redirectUrl: string }).redirectUrl;
       }
     } catch (err: any) {
       setError(err.response?.data?.error || 'Login failed');
