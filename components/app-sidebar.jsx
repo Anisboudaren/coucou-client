@@ -50,11 +50,7 @@ const data = {
       url: '/v1/agents/test/',
       icon: TerminalSquare,
     },
-    {
-      title: 'Edit Agent',
-      url: '/v1/agents/edit/',
-      icon: Settings2,
-    },
+
     {
       title: 'Connect Agent',
       url: '/v1/agents/connect/',

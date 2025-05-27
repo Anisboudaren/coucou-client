@@ -8,7 +8,7 @@ const BubbleIframePage = () => {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [typingMessage, setTypingMessage] = useState('');
-  // const [agentId, setAgentId] = useState('');
+
   const params = useParams();
   console.log(window.location.href);
   const agentId = params.id;

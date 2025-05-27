@@ -201,7 +201,7 @@ export function BuildConfiguration({
                       </FormLabel>
                       <FormControl>
                         <Slider
-                          defaultValue={[field.value]}
+                          value={[field.value]}
                           max={2}
                           step={1}
                           onValueChange={vals => field.onChange(vals[0])}
@@ -223,7 +223,7 @@ export function BuildConfiguration({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Primary Function</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <Select onValueChange={field.onChange} value={field.value}>
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="Select function" />

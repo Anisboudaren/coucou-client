@@ -37,9 +37,17 @@ const BubbleIframePage = () => {
     setMessages(prev => [...prev, userMessage]);
     setInput('');
     setLoading(true);
+    const storedConvoId = localStorage.getItem('convoId');
+    const storedExpiration = localStorage.getItem('convoIdExpiration');
+
+    const isExpired = storedExpiration && Date.now() > parseInt(storedExpiration, 10);
 
     // here we check if the localstorage have the convoId if yest we skip if not we init
-    if (!localStorage.getItem('convoId')) {
+    if (!storedConvoId || isExpired) {
+      if (isExpired) {
+        localStorage.removeItem('convoId');
+        localStorage.removeItem('convoIdExpiration');
+      }
       try {
         const res = await axios.post(
           `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/v1/conversation/init`,
@@ -50,7 +58,9 @@ const BubbleIframePage = () => {
         );
 
         const newConvoId = (res.data as { id: string }).id;
+        const expirationTime = Date.now() + 1000 * 60 * 30; // 30 minutes expiration
         localStorage.setItem('convoId', newConvoId);
+        localStorage.setItem('convoIdExpiration', expirationTime.toString());
 
         const sendRes = await axios.post(
           `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/v1/conversation/send`,
@@ -118,9 +128,17 @@ const BubbleIframePage = () => {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const storedId = localStorage.getItem('convoId');
-      if (storedId) {
+      const storedExpiration = localStorage.getItem('convoIdExpiration');
+
+      const isExpired = storedExpiration && Date.now() > parseInt(storedExpiration, 10);
+
+      if (!storedId || isExpired) {
+        console.log('🗑️ Conversation expired or missing. Clearing localStorage...');
         localStorage.removeItem('convoId');
-      } else console.log('no convo Id in local storage ');
+        localStorage.removeItem('convoIdExpiration');
+      } else {
+        console.log('✅ Existing convoId is valid:', storedId);
+      }
     }
   }, []);
 

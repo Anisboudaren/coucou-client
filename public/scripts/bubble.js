@@ -1,12 +1,31 @@
 (function () {
-  const params = new URLSearchParams(window.location.search);
-  const agentId = params.get('id');
+  // Try to get agent ID from data attribute on the script tag
+  const FRONT_END_URL = 'http://localhost:3000';
+  let agentId = null;
+  const currentScript = document.currentScript;
+  if (currentScript) {
+    console.log('i got it from the script tag');
+    agentId = currentScript.getAttribute('data-agent-id');
+  }
 
-  console.log('Agent ID:', agentId);
+  // Fallback: if no data attribute, try to get it from URL query parameter
+  if (!agentId) {
+    console.log('i got it from the URL');
+    const params = new URLSearchParams(window.location.search);
+    agentId = params.get('id');
+  }
+
+  // Final fallback: handle missing ID
+  if (!agentId) {
+    console.error('❌ Agent ID not found. Please provide it in the script tag or URL.');
+    return;
+  }
+
+  console.log('✅ Using Agent ID:', agentId);
 
   // Create the chat bubble icon
   const bubbleIcon = document.createElement('iframe');
-  bubbleIcon.src = './v1/bubble'; // Replace with the correct path to your chat bubble iframe
+  bubbleIcon.src = `http://localhost:3000/v1/bubble`;
   bubbleIcon.width = '70';
   bubbleIcon.height = '70';
   bubbleIcon.style.border = 'none';
@@ -20,7 +39,7 @@
 
   // Create the chat window iframe (initially hidden)
   const chatWindow = document.createElement('iframe');
-  chatWindow.src = `./v1/bubble-window/${agentId}`; // Replace with the correct path to your chat window iframe
+  chatWindow.src = `${FRONT_END_URL}/v1/bubble-window/${agentId}`;
   chatWindow.width = '100%';
   chatWindow.height = '100%';
   chatWindow.style.border = 'none';
@@ -32,28 +51,22 @@
   chatWindow.style.overflow = 'hidden';
   chatWindow.style.opacity = '0';
   chatWindow.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-  chatWindow.style.transform = 'translateY(100vh)'; // Off-screen initially
+  chatWindow.style.transform = 'translateY(100vh)';
   document.body.appendChild(chatWindow);
 
-  // Listen for the postMessage from the parent or other iframes
+  // Listen for postMessages
   window.addEventListener('message', event => {
-    // Check if the message is coming from a trusted source (optional, add your domain)
-
-    // Open or close the chat based on the message
     if (event.data.message === 'openChat') {
-      chatWindow.style.opacity = '1'; // Make the chat window visible
-      chatWindow.style.transform = 'translateY(0)'; // Slide the chat window in
-      console.log('trying to open chat ');
+      chatWindow.style.opacity = '1';
+      chatWindow.style.transform = 'translateY(0)';
     } else if (event.data.message === 'closeChat') {
-      chatWindow.style.opacity = '0'; // Make the chat window invisible
-      chatWindow.style.transform = 'translateY(100vh)'; // Slide the chat window out
-      console.log('trying to close it ');
+      chatWindow.style.opacity = '0';
+      chatWindow.style.transform = 'translateY(100vh)';
     }
   });
 
-  // Send a message when the bubble icon is clicked
+  // Bubble click opens chat
   bubbleIcon.addEventListener('click', () => {
-    window.postMessage({ message: 'openChat' }, '*'); // Open the chat
-    console.log('bawni gali hadi makanch , es ce que sah ? ');
+    window.postMessage({ message: 'openChat' }, '*');
   });
 })();

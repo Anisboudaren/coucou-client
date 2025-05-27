@@ -95,7 +95,6 @@ export default function Page() {
       const knowledgeValues = knowledgeForm.getValues();
       const BasicSettings = form.getValues();
       const agentId = params.id;
-
       await axios.post(
         `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/v1/agent/${agentId}/build`,
         {
@@ -142,10 +141,31 @@ export default function Page() {
   }, [params.id]);
 
   useEffect(() => {
+    console.log(agent);
+
     if (agent) {
-      form.reset({ aiName: agent.name || '' });
+      form.reset({
+        aiName: agent.name || '',
+        template: agent.template || 'support',
+        model: agent.model || 'deepseek-v1',
+        messageLength: agent.messageLength || 500,
+        allowHumanAgent: agent.allowHumanAgent ?? true,
+      });
+
+      personalityForm.reset({
+        primaryTraits: agent.settings?.primaryTraits || [],
+        communicationTone: agent.settings?.communicationTone || 'conversational',
+        formalityLevel: agent.settings?.formalityLevel ?? 1,
+        primaryFunction: agent.settings?.primaryFunction || '',
+        brandValues: agent.settings?.brandValues || '',
+      });
+
+      knowledgeForm.reset({
+        rules: agent.settings?.rules || '',
+        companyInformation: agent.settings?.companyInformation || '',
+      });
     }
-  }, [agent, form]);
+  }, [agent, form, knowledgeForm, personalityForm]);
 
   return (
     <SidebarProvider

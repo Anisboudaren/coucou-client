@@ -1,15 +1,20 @@
-// middleware.ts
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-const publicPaths = ['/', '/v1/login', '/v1/register'];
-
 export function middleware(req: NextRequest) {
-  console.log('Middleware triggered for:', req.nextUrl.pathname);
+  const { pathname } = req.nextUrl;
+
+  console.log('Middleware triggered for:', pathname);
 
   const token = req.cookies.get('token');
   console.log('Token:', token);
-  const isPublic = publicPaths.includes(req.nextUrl.pathname);
+
+  const isPublic =
+    pathname === '/' ||
+    pathname.startsWith('/v1/login') ||
+    pathname.startsWith('/v1/register') ||
+    pathname.startsWith('/v1/bubble') ||
+    pathname.startsWith('/v1/bubble-window');
 
   if (!token && !isPublic) {
     return NextResponse.redirect(new URL('/v1/login', req.url));
