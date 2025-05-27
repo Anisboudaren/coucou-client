@@ -7,25 +7,29 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { SiGoogle } from 'react-icons/si';
+import { useRouter } from 'next/navigation';
 
 export function LoginForm({ className, ...props }: React.ComponentProps<'form'>) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
+    axios.defaults.withCredentials = true;
     try {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/v1/auth/login`,
         { email, password },
         { withCredentials: true },
       );
+
       if (response.status === 200) {
-        window.location.href = `${process.env.NEXT_PUBLIC_FRONTEND_BASE_URL}/v1/dashboard`;
+        router.push('/v1/dashboard');
       }
     } catch (err: any) {
       setError(err.response?.data?.error || 'Login failed');
