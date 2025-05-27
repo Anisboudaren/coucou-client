@@ -27,6 +27,7 @@ async function proxy(req: NextRequest) {
 
   const headers = new Headers(req.headers);
   headers.delete('host'); // Avoid passing "host" to backend
+  headers.delete('accept-encoding'); // 🔥 Fix broken GET requests on Vercel
 
   const body =
     req.method !== 'GET' && req.method !== 'HEAD' ? await req.clone().arrayBuffer() : undefined;
@@ -40,7 +41,7 @@ async function proxy(req: NextRequest) {
 
   const responseBody = await res.arrayBuffer();
   const responseHeaders = new Headers(res.headers);
-  responseHeaders.delete('content-encoding'); // 🔥 This is the key line
+  responseHeaders.delete('content-encoding'); // Avoid double compression errors
 
   return new Response(responseBody, {
     status: res.status,
