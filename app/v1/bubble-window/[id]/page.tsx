@@ -41,7 +41,7 @@ const BubbleIframePage = () => {
     const storedExpiration = localStorage.getItem('convoIdExpiration');
 
     const isExpired = storedExpiration && Date.now() > parseInt(storedExpiration, 10);
-
+    // just test
     // here we check if the localstorage have the convoId if yest we skip if not we init
     if (!storedConvoId || isExpired) {
       if (isExpired) {
