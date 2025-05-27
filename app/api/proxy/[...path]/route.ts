@@ -13,7 +13,13 @@ export async function POST(req: NextRequest) {
   return proxy(req);
 }
 
-// Add more HTTP methods if needed...
+export async function PUT(req: NextRequest) {
+  return proxy(req);
+}
+
+export async function DELETE(req: NextRequest) {
+  return proxy(req);
+}
 
 async function proxy(req: NextRequest) {
   const url = new URL(req.url);

@@ -40,11 +40,9 @@ export function AddBuild({ closeDialog, onSuccess, onError }) {
 
     try {
       setLoading(true);
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/v1/agent/add`,
-        values,
-        { withCredentials: true },
-      );
+      const response = await axios.post(`/api/proxy/v1/agent/add`, values, {
+        withCredentials: true,
+      });
 
       const createdAgent = response.data?.data;
 

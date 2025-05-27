@@ -109,7 +109,7 @@ export function AppSidebar({ ...props }) {
   useEffect(() => {
     const getMe = async () => {
       try {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/v1/user/me`, {
+        const response = await axios.get(`/api/proxy/v1/user/me`, {
           withCredentials: true,
         });
         console.log(response.data.data.email);

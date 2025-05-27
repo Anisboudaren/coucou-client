@@ -32,7 +32,7 @@ export default function Page() {
   useEffect(() => {
     const getAgents = async () => {
       try {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/v1/agent`, {
+        const response = await axios.get(`/api/proxy/v1/agent`, {
           withCredentials: true,
         });
         const data = response.data as { data: Agent[] };
