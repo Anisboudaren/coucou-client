@@ -27,7 +27,8 @@ async function proxy(req: NextRequest) {
   const headers = new Headers(req.headers);
   headers.delete('host');
   headers.delete('accept-encoding');
-
+  headers.delete('if-none-match'); // <-- Add this
+  headers.delete('if-modified-since');
   const body =
     req.method !== 'GET' && req.method !== 'HEAD' ? await req.clone().arrayBuffer() : undefined;
 
