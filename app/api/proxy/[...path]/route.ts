@@ -19,18 +19,25 @@ async function proxy(req: NextRequest) {
   const url = new URL(req.url);
   const targetPath = url.pathname.replace(/^\/api\/proxy/, '');
 
+  const headers = new Headers(req.headers);
+  headers.delete('host'); // Avoid passing "host" to backend
+
+  const body =
+    req.method !== 'GET' && req.method !== 'HEAD' ? await req.clone().arrayBuffer() : undefined;
+
   const res = await fetch(`${API_URL}${targetPath}`, {
     method: req.method,
-    headers: req.headers,
-    body: req.method !== 'GET' && req.method !== 'HEAD' ? req.body : undefined,
+    headers,
+    body,
     credentials: 'include',
   });
 
-  const body = await res.arrayBuffer();
-  const headers = new Headers(res.headers);
-  return new Response(body, {
+  const responseBody = await res.arrayBuffer();
+  const responseHeaders = new Headers(res.headers);
+
+  return new Response(responseBody, {
     status: res.status,
     statusText: res.statusText,
-    headers,
+    headers: responseHeaders,
   });
 }
