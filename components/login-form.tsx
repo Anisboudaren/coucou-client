@@ -20,7 +20,11 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'form'>)
     e.preventDefault();
     setLoading(true);
     setError(null);
+
     axios.defaults.withCredentials = true;
+
+    console.log('🔄 Attempting login...');
+
     try {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/v1/auth/login`,
@@ -28,13 +32,18 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'form'>)
         { withCredentials: true },
       );
 
-      if (response.status === 200) {
-        console.log(response.headers);
-        setLoading(false);
-        router.push('/v1/dashboard');
-      }
+      console.log('✅ Login successful!');
+      console.log('📦 Response Headers:', response.headers);
+      console.log('📦 Set-Cookie (check browser devtools manually)');
+
+      // Debugging cookie in browser (will not show here, but for reminder)
+      // Check: Application tab > Cookies
+
+      router.push('/v1/dashboard');
     } catch (err: any) {
+      console.error('❌ Login error:', err.response?.data || err.message);
       setError(err.response?.data?.error || 'Login failed');
+    } finally {
       setLoading(false);
     }
   };
