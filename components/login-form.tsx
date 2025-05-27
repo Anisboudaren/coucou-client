@@ -29,6 +29,8 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'form'>)
       );
 
       if (response.status === 200) {
+        console.log(response.headers);
+        setLoading(false);
         router.push('/v1/dashboard');
       }
     } catch (err: any) {
