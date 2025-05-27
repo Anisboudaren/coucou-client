@@ -34,6 +34,7 @@ async function proxy(req: NextRequest) {
 
   const responseBody = await res.arrayBuffer();
   const responseHeaders = new Headers(res.headers);
+  responseHeaders.delete('content-encoding'); // 🔥 This is the key line
 
   return new Response(responseBody, {
     status: res.status,
