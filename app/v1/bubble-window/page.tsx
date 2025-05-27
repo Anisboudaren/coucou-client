@@ -10,9 +10,10 @@ const BubbleIframePage = () => {
   const [typingMessage, setTypingMessage] = useState('');
 
   const params = useParams();
-  console.log(window.location.href);
+
   const agentId = params.id;
   console.log('Agent ID inside bubble-window:', agentId);
+
   const handleClick = () => {
     window.parent.postMessage({ message: 'closeChat' }, '*');
   };
