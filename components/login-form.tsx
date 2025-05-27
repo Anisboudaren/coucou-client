@@ -35,7 +35,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'form'>)
 
   const handleGoogleLogin = () => {
     // Redirect user to your backend Google OAuth URL (start OAuth flow)
-    window.location.href = 'http://localhost:5000/v1/auth/google';
+    window.location.href = `${process.env.NEXT_PUBLIC_FRONTEND_BASE_URL}/v1/auth/google`;
   };
 
   return (
