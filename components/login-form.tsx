@@ -20,12 +20,12 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'form'>)
     setError(null);
     try {
       const response = await axios.post(
-        'http://localhost:5000/v1/auth/login',
+        `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/v1/auth/login`,
         { email, password },
         { withCredentials: true },
       );
       if (response.status === 200) {
-        window.location.href = 'http://localhost:3000/v1/dashboard';
+        window.location.href = `${process.env.NEXT_PUBLIC_FRONTEND_BASE_URL}/v1/dashboard`;
       }
     } catch (err: any) {
       setError(err.response?.data?.error || 'Login failed');
@@ -35,7 +35,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'form'>)
 
   const handleGoogleLogin = () => {
     // Redirect user to your backend Google OAuth URL (start OAuth flow)
-    window.location.href = 'http://localhost:5000/v1/auth/google';
+    window.location.href = `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/v1/auth/google`;
   };
 
   return (
