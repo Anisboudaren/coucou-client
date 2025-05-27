@@ -1,52 +1,57 @@
 // app/api/proxy/[...path]/route.ts
 import { NextRequest } from 'next/server';
 
-export const runtime = 'nodejs'; // Use node runtime for proper stream handling
+export const runtime = 'nodejs'; // Required for streaming and fetch
 
 const API_URL = process.env.NEXT_PUBLIC_BACKEND_BASE_URL || 'http://localhost:5000';
 
 export async function GET(req: NextRequest) {
   return proxy(req);
 }
-
 export async function POST(req: NextRequest) {
   return proxy(req);
 }
-
 export async function PUT(req: NextRequest) {
   return proxy(req);
 }
-
 export async function DELETE(req: NextRequest) {
   return proxy(req);
 }
+
 async function proxy(req: NextRequest) {
   const url = new URL(req.url);
-  const targetPath = url.pathname.replace(/^\/api\/proxy/, '');
+  // Remove `/api/proxy` prefix from path to forward correctly
+  const targetPath = url.pathname.replace(/^\/api\/proxy/, '') + url.search;
 
+  // Clone headers but remove problematic ones
   const headers = new Headers(req.headers);
+
+  // Remove headers that may cause caching or compression issues
   headers.delete('host');
   headers.delete('accept-encoding');
-  headers.delete('if-none-match'); // <-- Add this
+  headers.delete('if-none-match');
   headers.delete('if-modified-since');
-  const body =
-    req.method !== 'GET' && req.method !== 'HEAD' ? await req.clone().arrayBuffer() : undefined;
 
-  const res = await fetch(`${API_URL}${targetPath}`, {
+  // Only send body for applicable methods
+  const body = req.method !== 'GET' && req.method !== 'HEAD' ? await req.arrayBuffer() : undefined;
+
+  // Forward request to backend API
+  const backendResponse = await fetch(`${API_URL}${targetPath}`, {
     method: req.method,
     headers,
     body,
-    credentials: 'include',
+    credentials: 'include', // Forward cookies
   });
 
-  // Remove content-encoding header to prevent double decompression on client
-  const responseHeaders = new Headers(res.headers);
+  // Clone response headers and remove content encoding to avoid double compression
+  const responseHeaders = new Headers(backendResponse.headers);
   responseHeaders.delete('content-encoding');
+  responseHeaders.delete('content-length');
 
-  // Stream backend response directly to client without buffering whole response
-  return new Response(res.body, {
-    status: res.status,
-    statusText: res.statusText,
+  // Stream response body directly
+  return new Response(backendResponse.body, {
+    status: backendResponse.status,
+    statusText: backendResponse.statusText,
     headers: responseHeaders,
   });
 }
