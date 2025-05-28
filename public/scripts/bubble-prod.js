@@ -1,71 +1,85 @@
 (function () {
-  // Try to get agent ID from data attribute on the script tag
   const FRONT_END_URL = 'https://coucou-client.vercel.app';
   let agentId = null;
+
   const currentScript = document.currentScript;
   if (currentScript) {
-    console.log('i got it from the script tag');
     agentId = currentScript.getAttribute('data-agent-id');
   }
 
-  // Fallback: if no data attribute, try to get it from URL query parameter
   if (!agentId) {
-    console.log('i got it from the URL');
     const params = new URLSearchParams(window.location.search);
     agentId = params.get('id');
   }
 
-  // Final fallback: handle missing ID
   if (!agentId) {
-    console.error('❌ Agent ID not found. Please provide it in the script tag or URL.');
+    console.error('❌ Agent ID not found.');
     return;
   }
 
-  console.log('✅ Using Agent ID:', agentId);
+  const isMobile = () => window.innerWidth <= 500;
+  const bubbleSize = isMobile() ? 70 : 70;
 
-  // Create the chat bubble icon
+  // Create Chat Bubble Icon
   const bubbleIcon = document.createElement('iframe');
   bubbleIcon.src = `${FRONT_END_URL}/v1/bubble`;
-  bubbleIcon.width = '70';
-  bubbleIcon.height = '70';
-  bubbleIcon.style.border = 'none';
+  bubbleIcon.width = bubbleSize;
+  bubbleIcon.height = bubbleSize;
   bubbleIcon.style.position = 'fixed';
   bubbleIcon.style.bottom = '20px';
   bubbleIcon.style.right = '20px';
+  bubbleIcon.style.border = 'none';
   bubbleIcon.style.borderRadius = '50%';
   bubbleIcon.style.zIndex = '9999';
   bubbleIcon.style.overflow = 'hidden';
   document.body.appendChild(bubbleIcon);
 
-  // Create the chat window iframe (initially hidden)
+  // Create Chat Window
   const chatWindow = document.createElement('iframe');
   chatWindow.src = `${FRONT_END_URL}/v1/bubble-window/${agentId}`;
-  chatWindow.width = '100%';
-  chatWindow.height = '100%';
   chatWindow.style.border = 'none';
   chatWindow.style.position = 'fixed';
-  chatWindow.style.top = '0px';
-  chatWindow.style.left = '0px';
-  chatWindow.style.backgroundColor = 'black';
   chatWindow.style.zIndex = '9999';
   chatWindow.style.overflow = 'hidden';
   chatWindow.style.opacity = '0';
-  chatWindow.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-  chatWindow.style.transform = 'translateY(100vh)';
+  chatWindow.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+
+  if (isMobile()) {
+    // Mobile: full screen
+    chatWindow.style.top = '0';
+    chatWindow.style.left = '0';
+    chatWindow.style.width = '100%';
+    chatWindow.style.height = '100%';
+    chatWindow.style.transform = 'translateY(100vh)';
+  } else {
+    // Desktop: floating above bubble
+    chatWindow.style.width = '400px';
+    chatWindow.style.height = '500px';
+    chatWindow.style.right = '50px';
+    chatWindow.style.bottom = `${bubbleSize + 35}px`;
+    chatWindow.style.borderRadius = '12px';
+    chatWindow.style.boxShadow = '0 8px 24px rgba(0, 0, 0, 0.2)';
+    chatWindow.style.transform = 'translateY(20px)';
+  }
+
   document.body.appendChild(chatWindow);
 
-  // Listen for postMessages
+  // Message listener for open/close
   window.addEventListener('message', event => {
     if (event.data.message === 'openChat') {
       chatWindow.style.opacity = '1';
       chatWindow.style.transform = 'translateY(0)';
     } else if (event.data.message === 'closeChat') {
       chatWindow.style.opacity = '0';
-      chatWindow.style.transform = 'translateY(100vh)';
+      if (isMobile()) {
+        chatWindow.style.transform = 'translateY(100vh)';
+      } else {
+        chatWindow.style.transform = 'translateY(20px)';
+      }
     }
   });
 
-  // Bubble click opens chat
+  // Click bubble to open
   bubbleIcon.addEventListener('click', () => {
     window.postMessage({ message: 'openChat' }, '*');
   });
