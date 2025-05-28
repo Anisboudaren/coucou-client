@@ -47,9 +47,11 @@ export default function Page() {
     getAgents();
   }, []);
 
+  const scriptFile = process.env.NODE_ENV === 'production' ? 'bubble-prod.js' : 'bubble.js';
+
   const scriptSnippet = selectedAgentId
     ? `<script 
-  src="${process.env.NEXT_PUBLIC_FRONTEND_BASE_URL}/scripts/bubble.js" 
+  src="${process.env.NEXT_PUBLIC_FRONTEND_BASE_URL}/scripts/${scriptFile}" 
   data-agent-id="${selectedAgentId}"
   defer
 ></script>`

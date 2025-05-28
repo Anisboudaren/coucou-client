@@ -1,6 +1,6 @@
 (function () {
   // Try to get agent ID from data attribute on the script tag
-  const FRONT_END_URL = 'http://localhost:3000';
+  const FRONT_END_URL = 'https://coucou-client.vercel.app';
   let agentId = null;
   const currentScript = document.currentScript;
   if (currentScript) {
