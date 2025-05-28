@@ -49,7 +49,7 @@ export default function Page() {
 
   const scriptSnippet = selectedAgentId
     ? `<script 
-  src="http://localhost:3000/scripts/bubble.js" 
+  src="${process.env.NEXT_PUBLIC_FRONTEND_BASE_URL}/scripts/bubble.js" 
   data-agent-id="${selectedAgentId}"
   defer
 ></script>`

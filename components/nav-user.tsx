@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
@@ -41,41 +42,29 @@ export function NavUser({
 
   const handleLogout = async () => {
     console.log('Logging out...');
-    console.log('Backend URL:', process.env.NEXT_PUBLIC_BACKEND_BASE_URL);
-    setError(null); // clear any old error
-    try {
-      console.log('Sending logout request...');
-      console.log('Backend URL:', process.env.NEXT_PUBLIC_BACKEND_BASE_URL);
+    setError(null);
 
+    try {
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/v1/auth/logout`,
-        {
-          withCredentials: true,
-        },
+        { withCredentials: true },
       );
       console.log('Logout response:', response);
 
       if (response.status === 200) {
+        // Try to clear client-side cookie for non-HttpOnly tokens, just in case:
+        document.cookie = 'authToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+
+        // Redirect to login page
         window.location.href = `${process.env.NEXT_PUBLIC_FRONTEND_BASE_URL}/v1/login`;
       }
-    } catch (err: unknown) {
-      if (
-        err &&
-        typeof err === 'object' &&
-        'response' in err &&
-        err.response &&
-        typeof err.response === 'object' &&
-        'data' in err.response &&
-        err.response.data &&
-        typeof err.response.data === 'object' &&
-        'error' in err.response.data
-      ) {
-        setError((err.response as { data: { error?: string } }).data.error || 'Log out failed');
-      } else {
-        setError('Log out failed');
-      }
+    } catch (err: any) {
+      console.error('Logout failed:', err);
+      const errorMsg = err?.response?.data?.error || 'Log out failed';
+      setError(errorMsg);
     }
   };
+
   return (
     <SidebarMenu>
       <SidebarMenuItem>

@@ -19,7 +19,7 @@ export default function Page() {
   const agentId = params.id as string;
 
   const scriptSnippet = `<script 
-  src="http://localhost:3000/scripts/bubble.js" 
+  src="${process.env.NEXT_PUBLIC_FRONTEND_BASE_URL}/scripts/bubble.js" 
   data-agent-id="${agentId}"
   defer
 ></script>`;
