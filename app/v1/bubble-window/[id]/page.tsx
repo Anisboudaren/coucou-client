@@ -4,7 +4,7 @@
 import type React from 'react';
 
 import { useEffect, useState, useRef } from 'react';
-import { ArrowLeft, Maximize2, Paperclip, Calendar, Smile } from 'lucide-react';
+import { ArrowLeft, Maximize2, Paperclip, Calendar, Smile, Bot } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import axios from 'axios';
 import { Button } from '@/components/ui/button';
@@ -191,9 +191,7 @@ const BubbleIframePage = () => {
           <div className="flex items-center gap-3">
             {/* Logo/Icon */}
             <div className="flex h-8 w-8 items-center justify-center">
-              <svg viewBox="0 0 24 24" className="h-6 w-6 text-black" fill="currentColor">
-                <path d="M12 2L15.09 8.26L22 9L17 14.74L18.18 22L12 18.27L5.82 22L7 14.74L2 9L8.91 8.26L12 2Z" />
-              </svg>
+              <Bot color="black" />
             </div>
             <div>
               <h1 className="font-medium text-gray-900">{agentName}</h1>
@@ -230,9 +228,7 @@ const BubbleIframePage = () => {
                 {msg.role === 'assistant' && (
                   <div className="flex items-center gap-2 text-sm">
                     <div className="flex h-5 w-5 items-center justify-center">
-                      <svg viewBox="0 0 24 24" className="h-4 w-4 text-black" fill="currentColor">
-                        <path d="M12 2L15.09 8.26L22 9L17 14.74L18.18 22L12 18.27L5.82 22L7 14.74L2 9L8.91 8.26L12 2Z" />
-                      </svg>
+                      <Bot color="black" />
                     </div>
                     <span className="font-medium text-gray-900">{agentName} - AI Agent</span>
                   </div>
@@ -255,9 +251,7 @@ const BubbleIframePage = () => {
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-sm">
                   <div className="flex h-5 w-5 items-center justify-center">
-                    <svg viewBox="0 0 24 24" className="h-4 w-4 text-black" fill="currentColor">
-                      <path d="M12 2L15.09 8.26L22 9L17 14.74L18.18 22L12 18.27L5.82 22L7 14.74L2 9L8.91 8.26L12 2Z" />
-                    </svg>
+                    <Bot color="black" />
                   </div>
                   <span className="font-medium text-gray-900">{agentName} - AI Agent</span>
                 </div>
@@ -280,9 +274,7 @@ const BubbleIframePage = () => {
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-sm">
                   <div className="flex h-5 w-5 items-center justify-center">
-                    <svg viewBox="0 0 24 24" className="h-4 w-4 text-black" fill="currentColor">
-                      <path d="M12 2L15.09 8.26L22 9L17 14.74L18.18 22L12 18.27L5.82 22L7 14.74L2 9L8.91 8.26L12 2Z" />
-                    </svg>
+                    <Bot color="black" />
                   </div>
                   <span className="font-medium text-gray-900">{agentName} - AI Agent</span>
                 </div>
