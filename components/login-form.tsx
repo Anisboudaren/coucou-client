@@ -27,19 +27,28 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'form'>)
 
     try {
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/v1/auth/login`,
+        `/api/proxy/v1/auth/login`,
         { email, password },
         { withCredentials: true },
       );
 
       console.log('✅ Login successful!');
       console.log('📦 Response Headers:', response.headers);
-      console.log('📦 Set-Cookie (check browser devtools manually)');
 
-      // Debugging cookie in browser (will not show here, but for reminder)
-      // Check: Application tab > Cookies
+      // Assert the type of response.data
+      const data = response.data as { token?: string };
+      const token = data.token;
+      if (token) {
+        // Set cookie manually
+        document.cookie = `token=${token}; path=/; max-age=${60 * 60 * 24}; Secure; SameSite=Lax`;
 
-      router.push('/v1/dashboard');
+        console.log('🔐 Token saved in cookie');
+
+        // Redirect after login
+        router.push('/v1/dashboard');
+      } else {
+        console.warn('⚠️ No token found in response');
+      }
     } catch (err: any) {
       console.error('❌ Login error:', err.response?.data || err.message);
       setError(err.response?.data?.error || 'Login failed');
