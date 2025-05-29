@@ -14,7 +14,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Bot } from 'lucide-react';
+import { Bot, Laptop2, Smartphone } from 'lucide-react';
+
+// Import Shadcn Dialog components
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 type Agent = { id: string; name: string };
 
@@ -22,7 +25,14 @@ export default function Page() {
   const [loading, setLoading] = useState(true);
   const [agents, setAgents] = useState<Agent[]>([]);
   const [selectedAgentId, setSelectedAgentId] = useState<string | undefined>();
+  const [previewMode, setPreviewMode] = useState<'mobile' | 'desktop'>('mobile');
+  const [scale, setScale] = useState(1);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const Router = useRouter();
+
+  const previewHtml =
+    process.env.NODE_ENV === 'production' ? 'chat-preview-prod.html' : 'chat-preview.html';
+
   useEffect(() => {
     const getAgents = async () => {
       try {
@@ -47,9 +57,47 @@ export default function Page() {
     }
   }, [selectedAgentId]);
 
+  // Scale calculation for desktop preview (still used inside dialog)
+  useEffect(() => {
+    function updateScale() {
+      if (previewMode === 'desktop') {
+        const maxWidth = 900; // max iframe width in px
+        const windowWidth = window.innerWidth;
+        if (windowWidth < maxWidth) {
+          const calculatedScale = (windowWidth - 40) / maxWidth; // 40px margin total
+          setScale(calculatedScale < 0.5 ? 0.5 : calculatedScale); // minimum scale 0.5
+        } else {
+          setScale(1);
+        }
+      } else {
+        setScale(1);
+      }
+    }
+
+    updateScale();
+    window.addEventListener('resize', updateScale);
+    return () => window.removeEventListener('resize', updateScale);
+  }, [previewMode]);
+
+  useEffect(() => {
+    if (!isDialogOpen) {
+      // When dialog closes, switch preview mode back to mobile
+      setPreviewMode('mobile');
+    }
+  }, [isDialogOpen]);
+
   function handleConnect(selectedAgentId: string): void {
-    // Redirect to the connect page for the selected agent
     Router.push(`/v1/agents/connect/${selectedAgentId}`);
+  }
+
+  function openDesktopPreview() {
+    setPreviewMode('desktop');
+    setIsDialogOpen(true);
+  }
+
+  function openMobilePreview() {
+    setPreviewMode('mobile');
+    setIsDialogOpen(false);
   }
 
   return (
@@ -101,10 +149,8 @@ export default function Page() {
                           Customize your AI agent&apos;s appearance and behavior to match your
                           brand.
                         </p>
-                        {/* You can add customization controls here */}
                       </div>
                       <div className="mt-6">
-                        {/* Example button or action */}
                         <button
                           onClick={() => handleConnect(selectedAgentId)}
                           className="bg-primary hover:bg-primary/90 w-full rounded-lg px-4 py-2 text-white"
@@ -116,15 +162,75 @@ export default function Page() {
 
                     {/* Preview Section */}
                     <div className="bg-sidebar flex w-full flex-col rounded-2xl border-[0.5px] border-gray-400 p-6 md:w-2/3">
-                      <h2 className="mb-4 text-xl font-semibold">Preview</h2>
-                      <div className="h-0 min-h-[500px] flex-grow">
-                        <iframe
-                          key={selectedAgentId} // This forces reload when agent changes
-                          src={`/chat-preview.html?id=${selectedAgentId}`}
-                          className="h-full w-full rounded-lg border"
-                          title="Chat Preview"
-                        />
+                      <div className="mb-4 flex items-center justify-between">
+                        <h2 className="text-xl font-semibold">Preview</h2>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={openMobilePreview}
+                            className={`text-md flex items-center gap-2 rounded px-3 py-1 ${
+                              previewMode === 'mobile' ? 'bg-primary text-white' : 'bg-muted'
+                            }`}
+                          >
+                            <Smartphone /> Mobile
+                          </button>
+                          <button
+                            onClick={openDesktopPreview}
+                            className={`text-md flex items-center gap-2 rounded px-3 py-1 ${
+                              previewMode === 'desktop' ? 'bg-primary text-white' : 'bg-muted'
+                            }`}
+                          >
+                            <Laptop2 /> Desktop
+                          </button>
+                        </div>
                       </div>
+
+                      {/* Mobile preview inline */}
+                      {previewMode === 'mobile' && (
+                        <div className="flex h-full flex-grow justify-center">
+                          <iframe
+                            key={`${selectedAgentId}-mobile`} // reload on change
+                            src={`/${previewHtml}?id=${selectedAgentId}`}
+                            className="rounded-lg border"
+                            title="Chat Preview"
+                            style={{
+                              width: '375px',
+                              height: '100%',
+                              transition: 'width 0.3s ease, transform 0.3s ease',
+                              transformOrigin: 'top left',
+                              transform: 'scale(1)',
+                            }}
+                          />
+                        </div>
+                      )}
+
+                      {/* Desktop preview: dialog opened */}
+                      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                        <DialogContent
+                          style={{
+                            width: '90vw',
+                            height: '90vh',
+                            padding: 0,
+                            overflow: 'hidden',
+                            borderRadius: '1rem',
+                          }}
+                          className="h-[85vh] w-[90vw] max-w-none! overflow-hidden rounded-2xl p-0"
+                        >
+                          <DialogHeader className="flex hidden items-center justify-between border-b px-4 py-2">
+                            <DialogTitle>Desktop Preview</DialogTitle>
+                          </DialogHeader>
+                          <iframe
+                            key={`${selectedAgentId}-desktop`} // reload on change
+                            src={`/${previewHtml}?id=${selectedAgentId}`}
+                            className="h-full w-full" // subtract header height
+                            title="Chat Preview Desktop"
+                            style={{
+                              border: 'none',
+                              transformOrigin: 'top left',
+                              transform: `scale(${scale})`,
+                            }}
+                          />
+                        </DialogContent>
+                      </Dialog>
                     </div>
                   </>
                 ) : (
