@@ -40,7 +40,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'form'>)
       const token = data.token;
       if (token) {
         // Set cookie manually
-        document.cookie = `token=${token}; path=/; max-age=${60 * 60 * 24}; Secure; SameSite=Lax`;
+        // document.cookie = `token=${token}; path=/; max-age=${60 * 60 * 24}; Secure; SameSite=Lax`;
 
         console.log('🔐 Token saved in cookie');
 
