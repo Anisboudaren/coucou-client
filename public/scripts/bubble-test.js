@@ -1,5 +1,6 @@
 (function () {
-  const FRONT_END_URL = 'http://localhost:3000';
+  // const FRONT_END_URL = 'http://localhost:3000';
+  const FRONT_END_URL = 'https://coucou-ai.devlly.site';
   let agentId = null;
 
   const currentScript = document.currentScript;
