@@ -48,7 +48,8 @@ export default function Page() {
   }, []);
 
   // const scriptFile = process.env.NODE_ENV === 'production' ? 'bubble-prod.js' : 'bubble.js';
-  const scriptFile = process.env.VERCEL_ENV === 'production' ? 'bubble-prod.js' : 'bubble.js';
+  // for testing sake
+  const scriptFile = 'bubble-prod.js';
 
   const scriptSnippet = selectedAgentId
     ? `<script 
