@@ -47,7 +47,8 @@ export default function Page() {
     getAgents();
   }, []);
 
-  const scriptFile = process.env.NODE_ENV === 'production' ? 'bubble-prod.js' : 'bubble.js';
+  // const scriptFile = process.env.NODE_ENV === 'production' ? 'bubble-prod.js' : 'bubble.js';
+  const scriptFile = process.env.VERCEL_ENV === 'production' ? 'bubble-prod.js' : 'bubble.js';
 
   const scriptSnippet = selectedAgentId
     ? `<script 
