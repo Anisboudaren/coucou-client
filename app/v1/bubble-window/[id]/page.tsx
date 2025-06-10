@@ -15,7 +15,7 @@ const BubbleIframePage = () => {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [typingMessage, setTypingMessage] = useState('');
-  const [agentName, setAgentName] = useState('Fin');
+  const [agentName, setAgentName] = useState('Coucou ai');
 
   const params = useParams();
   const agentId = params.id;
@@ -118,10 +118,18 @@ const BubbleIframePage = () => {
     setLoading(false);
   };
 
+  async function fetchAgent() {
+    const res = await axios.get(
+      `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/v1/agent/${params.id}`,
+      {
+        withCredentials: true,
+      },
+    );
+    console.log(res.data.data);
+    setAgentName(res.data.data.name);
+  }
   useEffect(() => {
-    if (params?.id && typeof params.id === 'string') {
-      setAgentName(`${params.id.slice(0, 8)}`);
-    }
+    fetchAgent();
   }, [params]);
 
   useEffect(() => {
@@ -199,9 +207,6 @@ const BubbleIframePage = () => {
             </div>
           </div>
         </div>
-        <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-600 hover:text-gray-900">
-          <Maximize2 className="h-4 w-4" />
-        </Button>
       </div>
 
       {/* Messages Area */}
