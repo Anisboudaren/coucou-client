@@ -76,23 +76,58 @@ export function BuildConfiguration({
     }
   };
 
-  const handleImportFromWebsite = () => {
+  const handleImportFromWebsite = async () => {
     if (!websiteUrl) return;
 
     setIsImporting(true);
 
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      // Step 1: Scrape structured links
+      const linksRes = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/v1/scrape/links`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: websiteUrl }),
+      });
+
+      const linksData = await linksRes.json();
+
+      if (!linksRes.ok) {
+        throw new Error(linksData.error || 'Failed to scrape links');
+      }
+
+      // Step 2: Scrape meaningful content
+      const contentRes = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/v1/scrape/content`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url: websiteUrl }),
+        },
+      );
+
+      const contentData = await contentRes.json();
+
+      if (!contentRes.ok) {
+        throw new Error(contentData.error || 'Failed to scrape content');
+      }
+
+      const summary = contentData.summary;
+
+      // Step 3: Set value in form
       knowledgeForm.setValue(
         'companyInformation',
-        `## Content imported from: ${websiteUrl}\n\n` +
-          `Here's the information we found on your website...\n` +
-          `• About Us\n• Product Details\n• Contact Information`,
+        summary || 'No content found. Please provide manual input.',
       );
+
+      // You can also save `linksData.structured` if you need that too
+    } catch (err) {
+      console.error('Scraping failed:', err);
+      // Add toast or error handling here
+    } finally {
       setIsImporting(false);
       setIsImportDialogOpen(false);
       setWebsiteUrl('');
-    }, 3000);
+    }
   };
 
   const handleNext = () => {

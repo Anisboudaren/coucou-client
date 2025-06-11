@@ -342,10 +342,9 @@ const BubbleIframePage = () => {
         </form>
 
         {/* Footer disclaimer */}
-        <p className="mt-3 text-xs leading-relaxed text-gray-500">
-          By chatting with us, you agree to the monitoring and recording of this chat to improve our
-          service and processing of your personal data in accordance with our Privacy Policy.{' '}
-          <button className="underline hover:no-underline">See our Privacy Policy</button>.
+        <p className="mt-3 text-center text-xs leading-relaxed text-gray-500">
+          By chatting, you agree to our{' '}
+          <button className="underline hover:no-underline">privacy policy.</button>.
         </p>
       </div>
     </div>
