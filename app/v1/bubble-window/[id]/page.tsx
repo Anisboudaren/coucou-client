@@ -125,8 +125,7 @@ const BubbleIframePage = () => {
         withCredentials: true,
       },
     );
-    console.log(res.data.data);
-    setAgentName(res.data.data.name);
+    setAgentName((res.data as { data: { name: string } }).data.name);
   }
   useEffect(() => {
     fetchAgent();
